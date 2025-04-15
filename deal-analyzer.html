@@ -1,16 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Closers Hub | Deal Analyzer</title>
+  <title>Closers Hub Deal Analyzer</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    /* All CSS from previous example */
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+    button { background: #6c5ce7; color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; margin-top: 10px; }
+    #result { margin-top: 20px; padding: 15px; background: #f0f8ff; border-radius: 5px; display: none; }
   </style>
 </head>
 <body>
-  <!-- All HTML from previous example -->
+  <h2>🔍 Property Analyzer</h2>
+  <label>Address</label>
+  <input type="text" id="address" placeholder="123 Main St">
+  <label>Condition (1-10)</label>
+  <input type="number" id="condition" min="1" max="10" value="5">
+  <button onclick="analyze()">Calculate Offers</button>
+  <div id="result">
+    <h3>📊 Offers</h3>
+    <p><strong>Wholesale:</strong> $<span id="wholesale">0</span></p>
+    <p><strong>Novation:</strong> $<span id="novation">0</span></p>
+    <p><strong>Subject-To:</strong> $<span id="subjectTo">0</span> + $10k fee</p>
+    <button onclick="pdf()">Download PDF</button>
+  </div>
   <script>
-    // All JavaScript from previous example
+    function analyze() {
+      const condition = document.getElementById("condition").value;
+      const arv = 250000; // Sample ARV (replace with API)
+      const asIsValue = arv * (0.6 + (condition * 0.04));
+      document.getElementById("wholesale").textContent = Math.round(asIsValue * 0.7).toLocaleString();
+      document.getElementById("novation").textContent = Math.round(arv * 0.9 - 50000).toLocaleString();
+      document.getElementById("subjectTo").textContent = Math.round(asIsValue * 0.8).toLocaleString();
+      document.getElementById("result").style.display = "block";
+    }
+    function pdf() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text("Closers Hub Report", 10, 10);
+      doc.text(`Wholesale: $${document.getElementById("wholesale").textContent}`, 10, 20);
+      doc.save("offer.pdf");
+    }
   </script>
 </body>
 </html>
